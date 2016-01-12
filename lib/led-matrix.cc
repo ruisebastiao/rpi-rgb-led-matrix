@@ -21,6 +21,7 @@
 #include <string.h>
 #include <time.h>
 #include <math.h>
+#include <unistd.h>
 
 #define SHOW_REFRESH_RATE 0
 
@@ -52,6 +53,7 @@ public:
       gettimeofday(&start, NULL);
 #endif
       matrix_->UpdateScreen();
+      usleep(1000);
 #if SHOW_REFRESH_RATE
       gettimeofday(&end, NULL);
       int64_t usec = ((uint64_t)end.tv_sec * 1000000 + end.tv_usec)
