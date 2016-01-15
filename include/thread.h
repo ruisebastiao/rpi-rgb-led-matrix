@@ -61,6 +61,7 @@ class MutexLock {
 public:
   MutexLock(Mutex *m) : mutex_(m) { mutex_->Lock(); }
   ~MutexLock() { mutex_->Unlock(); }
+  
 private:
   Mutex *const mutex_;
 };

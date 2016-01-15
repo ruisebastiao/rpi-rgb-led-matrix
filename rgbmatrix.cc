@@ -56,6 +56,20 @@ static PyObject *Clear(RGBmatrixObject *self) {
         return Py_None;
 }
 
+static PyObject *SuspendUpdate(RGBmatrixObject *self) {
+	self->matrix->SuspendUpdate();
+
+        Py_INCREF(Py_None);
+        return Py_None;
+}
+
+static PyObject *ResumeUpdate(RGBmatrixObject *self) {
+	self->matrix->ResumeUpdate();
+
+        Py_INCREF(Py_None);
+        return Py_None;
+}
+
 static PyObject *Fill(RGBmatrixObject *self, PyObject *arg) {
         uint32_t c;
 	uint8_t  r, g, b;
@@ -240,12 +254,14 @@ static PyObject *SetPWMBits(RGBmatrixObject *self, PyObject *arg) {
 }
 
 static PyMethodDef methods[] = {
-  { "Clear"     , (PyCFunction)Clear     , METH_NOARGS , NULL },
-  { "Fill"      , (PyCFunction)Fill      , METH_VARARGS, NULL },
-  { "SetBuffer" , (PyCFunction)SetBuffer , METH_O,       NULL },
-  { "SetPixel"  , (PyCFunction)SetPixel  , METH_VARARGS, NULL },
-  { "SetImage"  , (PyCFunction)SetImage  , METH_VARARGS, NULL },
-  { "SetPWMBits", (PyCFunction)SetPWMBits, METH_VARARGS, NULL },
+  { "Clear"         , (PyCFunction)Clear     	, METH_NOARGS , NULL },
+  { "SuspendUpdate" , (PyCFunction)SuspendUpdate, METH_NOARGS , NULL },  
+  { "ResumeUpdate"  , (PyCFunction)ResumeUpdate , METH_NOARGS , NULL },    
+  { "Fill"          , (PyCFunction)Fill      	, METH_VARARGS, NULL },
+  { "SetBuffer"  	, (PyCFunction)SetBuffer 	, METH_O,       NULL },
+  { "SetPixel"  	, (PyCFunction)SetPixel  	, METH_VARARGS, NULL },
+  { "SetImage"  	, (PyCFunction)SetImage  	, METH_VARARGS, NULL },
+  { "SetPWMBits"	, (PyCFunction)SetPWMBits	, METH_VARARGS, NULL },
   { NULL, NULL, 0, NULL }
 };
 

@@ -22,6 +22,7 @@
 #include "gpio.h"
 #include "canvas.h"
 
+
 namespace rgb_matrix {
 // The RGB matrix provides the framebuffer and the facilities to constantly
 // update the LED matrix.
@@ -57,6 +58,8 @@ public:
                         uint8_t red, uint8_t green, uint8_t blue);
   virtual void Clear();
   virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+  void SuspendUpdate();
+  void ResumeUpdate();
 
 private:
   class Framebuffer;
@@ -70,6 +73,7 @@ private:
   Framebuffer *frame_;
   GPIO *io_;
   UpdateThread *updater_;
+
 };
 }  // end namespace rgb_matrix
 #endif  // RPI_RGBMATRIX_H

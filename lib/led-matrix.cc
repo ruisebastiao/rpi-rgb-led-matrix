@@ -33,21 +33,32 @@
 #include "gpio.h"
 #include "thread.h"
 #include "framebuffer-internal.h"
+#include <iostream>
+using namespace std;
 
 namespace rgb_matrix {
 
 // Pump pixels to screen. Needs to be high priority real-time because jitter
 class RGBMatrix::UpdateThread : public Thread {
 public:
-  UpdateThread(RGBMatrix *matrix) : running_(true), matrix_(matrix) {}
+  UpdateThread(RGBMatrix *matrix) : Suspend(false),running_(true),matrix_(matrix) {}
 
-  void Stop() {
-    MutexLock l(&mutex_);
+  void Stop() {	
+    MutexLock l(&mutex_);	
     running_ = false;
   }
+  
 
   virtual void Run() {
     while (running()) {
+		 if(Suspend)
+		 {						
+			//pthread_cond_wait(&cond, &SuspendMutex);			
+			usleep(100000);
+		 }
+		 else{
+	
+		
 #if SHOW_REFRESH_RATE
       struct timeval start, end;
       gettimeofday(&start, NULL);
@@ -61,17 +72,23 @@ public:
       printf("\b\b\b\b\b\b\b\b%6.1fHz", 1e6 / usec);
 #endif
     }
+	}
   }
 
+ public:
+ 
+  bool Suspend;
+  
 private:
   inline bool running() {
     MutexLock l(&mutex_);
     return running_;
   }
-
+    
   Mutex mutex_;
   bool running_;
   RGBMatrix *const matrix_;
+  
 };
 
 RGBMatrix::RGBMatrix(GPIO *io, int rows, int chained_displays)
@@ -91,6 +108,22 @@ RGBMatrix::~RGBMatrix() {
   delete frame_;
 }
 
+  
+  
+  
+void RGBMatrix::SuspendUpdate() {   
+	
+	updater_->Suspend=true;
+	
+  }
+  
+  void RGBMatrix::ResumeUpdate() {   
+	
+	updater_->Suspend=false;
+		
+  }
+  
+  
 void RGBMatrix::SetGPIO(GPIO *io) {
   if (io == NULL) return;  // nothing to set.
   if (io_ != NULL) return;  // already set.
